@@ -1,0 +1,46 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinitions": [
+    {
+      // Nombre arbitrario
+      "name": "client",
+      "image": "erm8888/multi-client",
+      // Hostname es como se puede acceder a este container desde otros. Si se pusiese google.com y en otro container se accede a google.com, se estará accediendo a este container
+      "hostname": "client",
+      // Este container es considerado esencial o no. Si es essential y se cae, todos los containers en este grupo serán parados. Al menos un servicio en el grupo tiene que ser essential
+      "essential": false,
+      // Añade la propiedad de memory en MB que necesita AWS para ñlanzar el container. La cantidad es dificil de definir
+      "memory": 128
+    },
+    {
+      "name": "server",
+      "image": "erm8888/multi-server",
+      "hostname": "api",
+      "essential": false,
+      "memory": 128
+    },
+    {
+      "name": "worker",
+      "image": "erm8888/multi-worker",
+      "hostname": "worker",
+      "essential": false,
+      "memory": 128
+    },
+    {
+      "name": "nginx",
+      "image": "erm8888/multi-nginx",
+      // No se necesita hostname ya que ninguno llamara a este servicio en el grupo
+      "essential": true,
+      // Se hace el mapping entre los puertos de entrada y el del container
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "containerPort": 80
+        }
+      ],
+      // Links hacia otros containers. Se utiliza la propiedad name de la deficion
+      "links": ["client", "server"],
+      "memory": 128
+    }
+  ]
+}

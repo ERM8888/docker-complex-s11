@@ -23,3 +23,16 @@ after_success:
   - docker push erm8888/multi-nginx
   - docker push erm8888/multi-server
   - docker push erm8888/multi-worker
+# Se añade la seccion para hacer el deploy en AWS como se hizo en la seccion 7
+deploy:
+  provider: elasticbeanstalk
+  region: us-west-1
+  app: multi-docker
+  env: MultiDocker-env
+  bucket_name: elasticbeanstalk-us-west-1-<>
+  bucket_path: docker-multi
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET_KEY
